@@ -5,7 +5,7 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.local.set({procTotal});
   let start=false;
   let procSessions = 0;
-  chrome.storage.local.set({procSession});
+  chrome.storage.local.set({procSessions});
   let hours= [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
   let days ={"0":[],"1":[],"2":[],"3":[],"4":[],"5":[],"6":[]};
   let workSites=["docs.google.com"];
