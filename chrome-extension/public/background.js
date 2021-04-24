@@ -1,7 +1,6 @@
 chrome.runtime.onInstalled.addListener(() => {
   let procTotal=0;
-  let date = new Date();
-  let prevTime = date.getSeconds() + date.getMinutes()*60 + date.getHours()*3600;
+  let prevTime = Date.now();
   chrome.storage.local.set({prevTime});
   chrome.storage.local.set({procTotal});
   let start=false;
@@ -18,11 +17,11 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.local.set({workSites});
 });
 chrome.runtime.onStartup.addListener(()=>{
-    var date = new Date();
-    let prevTime=date.getSeconds() + date.getHours()*3600 + date.getMinutes()*60;
+    var prevTime = Date.now();
     chrome.storage.local.set({prevTime});
     let start=false;
     let act=false;
     chrome.storage.local.set({act});
     chrome.storage.local.set({start});
 });
+
