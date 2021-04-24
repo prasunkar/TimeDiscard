@@ -9,8 +9,9 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.local.set({procSession});
   let hours= [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
   let days ={"0":[],"1":[],"2":[],"3":[],"4":[],"5":[],"6":[]};
+  let workSites=[];
+  chrome.storage.local.set({days});
   chrome.storage.local.set({hours});
   chrome.storage.local.set({start});
-  let workSites=[];
   chrome.storage.local.set({workSites});
 });
