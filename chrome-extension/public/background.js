@@ -33,12 +33,14 @@ chrome.tabs.onActivated.addListener(()=>{
  chrome.storage.local.get("workSites",({workSites})=>{
      for(var i=0;i<workSites.length;i++){
         if(website[0]==workSites[i]){
-        start=false;
+        let start=false;
         chrome.storage.local.set({start});
         break
         }
      }
  });
- console.log(start);
+ chrome.storage.local.get("start",({start})=>{
+    console.log(start);
+ });
 });
 
