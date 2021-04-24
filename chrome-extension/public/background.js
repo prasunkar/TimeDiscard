@@ -27,11 +27,18 @@ chrome.runtime.onStartup.addListener(()=>{
 chrome.tabs.onActivated.addListener(()=>{
  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
  let extractSite= new RegExp("(?<=//).*(?=/)");
- let website=tab.url.exec(extractSite);
+ let website = extractSite.exec(tab.url);
+ let start=true;
+ chrome.storage.local.set({start});
  chrome.storage.local.get("workSites",({workSites})=>{
      for(var i=0;i<workSites.length;i++){
-        if(tab.url==``)
+        if(website[0]==workSites[i]){
+        start=false;
+        chrome.storage.local.set({start});
+        break
+        }
      }
  });
+ console.log(start);
 });
 
