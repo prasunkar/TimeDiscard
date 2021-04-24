@@ -77,6 +77,9 @@ chrome.tabs.onActivated.addListener(async ()=>{
      chrome.storage.local.get("prevTime",({prevTime})=>{
         console.log(prevTime);
      });
+     chrome.storage.local.get("procSessions",({procSessions})=>{
+        console.log(procSessions);
+     });
       });
 });
 chrome.tabs.onUpdated.addListener(async ()=>{
@@ -131,6 +134,9 @@ chrome.tabs.onUpdated.addListener(async ()=>{
      });
      chrome.storage.local.get("prevTime",({prevTime})=>{
         console.log(prevTime);
+     });
+     chrome.storage.local.get("procSessions",({procSessions})=>{
+        console.log(procSessions);
      });
       });
 });
