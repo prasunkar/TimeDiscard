@@ -11,7 +11,6 @@ chrome.runtime.onInstalled.addListener(() => {
   let days ={"0":[],"1":[],"2":[],"3":[],"4":[],"5":[],"6":[]};
   chrome.storage.local.set({hours});
   chrome.storage.local.set({start});
-  chrome.storage.local.set({sites});
   let workSites=[];
   chrome.storage.local.set({workSites});
 });
