@@ -9,6 +9,8 @@ chrome.runtime.onInstalled.addListener(() => {
   let hours= [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
   let days ={"0":[],"1":[],"2":[],"3":[],"4":[],"5":[],"6":[]};
   let workSites=["docs.google.com","www.w3schools.com"];
+  let procSites={};
+  chrome.storage.local.set({procSites});
   let act=false;
   chrome.storage.local.set({act});
   chrome.storage.local.set({days});
@@ -28,9 +30,9 @@ chrome.tabs.onActivated.addListener(async ()=>{
  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
  let extractSite= new RegExp("(?<=//).*[.][a-z]*(?=/)",'g');
  let website = extractSite.exec(tab.url);
- console.log(website[0]);
+ console.log("URL of website:"+website[0]);
  chrome.storage.local.get("workSites",({workSites})=>{
-     console.log(workSites);
+     console.log("work sites:"+workSites);
      for(var i=0;i<workSites.length;i++){
         if(website[0]==workSites[i]){
         let start=false;
@@ -54,112 +56,57 @@ chrome.tabs.onActivated.addListener(async ()=>{
      let act=true;
      chrome.storage.local.set({act});
      chrome.storage.local.set({start});
+     chrome.storage.local.get("procSites",({procSites})=>{
+        if(procSites[website[0]]){
+            return 0;
+        }
+        else{
+        procSites[website[0]]=0;
+        console.log("Procsites:"+procSites[website[0]]);
+        chrome.storage.local.set({procSites});
+        }
+     });
      }
+     });
      chrome.storage.local.get("act",({act})=>{
      if(act){
-        chrome.storage.local.get("start",({start})=>{
-            if(start==false){
             chrome.storage.local.get("prevTime",({prevTime})=>{
                 let curTime= Date.now();
                 let timediff=curTime-prevTime;
+                 chrome.storage.local.get("procSites",({procSites})=>{
+                    procSites[website[0]]+=timediff;
+                    chrome.storage.local.set({procSites});
+                });
                 chrome.storage.local.get("procTotal",({procTotal})=>{
                     procTotal+=timediff;
+                    console.log("timediff:"+timediff);
                     chrome.storage.local.set({procTotal});
-                    console.log(Math.floor(procTotal/1000));
+                    console.log("time spent procrastinating:"+Math.floor(procTotal/1000));
+                });
+                chrome.storage.local.get("start",({start})=>{
+                if(start==false){
+                        let act=false;
+                        chrome.storage.local.set({act});
+                }
+                prevTime=curTime;
+                chrome.storage.local.set({prevTime});
                 });
             });
-            let act=false;
-            chrome.storage.local.set({act});
-            }
-        });
      }
      });
      chrome.storage.local.get("prevTime",({prevTime})=>{
-        console.log(prevTime);
+        console.log("prevTime:"+prevTime);
+     });
+     chrome.storage.local.get("procTotal",({procTotal})=>{
+        console.log("time spent procrastinating:"+Math.floor(procTotal/1000));
      });
      chrome.storage.local.get("procSessions",({procSessions})=>{
-        console.log(procSessions);
+        console.log("# of procrastination:"+procSessions);
      });
-      });
-});
-chrome.tabs.onUpdated.addListener(async ()=>{
- let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
- let extractSite= new RegExp("(?<=//).*[.][a-z]*(?=/)",'g');
- let website = extractSite.exec(tab.url);
- console.log(website[0]);
- chrome.storage.local.get("workSites",({workSites})=>{
-     console.log(workSites);
-     for(var i=0;i<workSites.length;i++){
-        if(website[0]==workSites[i]){
-        let start=false;
-        chrome.storage.local.set({start});
-        var stop=true;
-        break;
+     chrome.storage.local.get("procSites",({procSites})=>{
+        console.log("procrastination sites visited and time:")
+        for (const [key, value] of Object.entries(procSites)) {
+            console.log(`${key}: ${value}`);
         }
-     }
-     if(stop!=true){
-     let start=true;
-     chrome.storage.local.get("act",({act})=>{
-        if(act==false){
-          let prevTime= Date.now()
-          chrome.storage.local.get("procSessions",({procSessions})=>{
-            procSessions+=1;
-            chrome.storage.local.set({procSessions});
-          });
-          chrome.storage.local.set({prevTime});
-        }
-     });
-     let act=true;
-     chrome.storage.local.set({act});
-     chrome.storage.local.set({start});
-     }
-     chrome.storage.local.get("act",({act})=>{
-     if(act){
-        chrome.storage.local.get("start",({start})=>{
-            if(start==false){
-            chrome.storage.local.get("prevTime",({prevTime})=>{
-                let curTime= Date.now();
-                let timediff=curTime-prevTime;
-                chrome.storage.local.get("procTotal",({procTotal})=>{
-                    procTotal+=timediff;
-                    chrome.storage.local.set({procTotal});
-                    console.log(Math.floor(procTotal/1000));
-                });
-            });
-            let act=false;
-            chrome.storage.local.set({act});
-            }
-        });
-     }
-     });
-     chrome.storage.local.get("prevTime",({prevTime})=>{
-        console.log(prevTime);
-     });
-     chrome.storage.local.get("procSessions",({procSessions})=>{
-        console.log(procSessions);
-     });
-      });
-});
-chrome.windows.onRemoved.addListener(()=>{
-console.log("off");
-    chrome.storage.local.get("act",({act})=>{
-    console.log(act);
-     if(act){
-        chrome.storage.local.get("start",({start})=>{
-            if(start){
-            chrome.storage.local.get("prevTime",({prevTime})=>{
-                let curTime= Date.now();
-                let timediff=curTime-prevTime;
-                chrome.storage.local.get("procTotal",({procTotal})=>{
-                    procTotal+=timediff;
-                    chrome.storage.local.set({procTotal});
-                    console.log(Math.floor(procTotal/1000));
-                });
-            });
-            let act=false;
-            chrome.storage.local.set({act});
-            }
-        });
-     }
      });
 });
