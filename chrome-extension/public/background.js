@@ -47,4 +47,47 @@ chrome.tabs.onActivated.addListener(async ()=>{
  });
  });
 });
-
+chrome.tabs.onUpdated.addListener(async ()=>{
+ let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+ let extractSite= new RegExp("(?<=//).*[.][a-z]*(?=/)",'g');
+ let website = extractSite.exec(tab.url);
+ console.log(website[0]);
+ chrome.storage.local.get("workSites",({workSites})=>{
+     console.log(workSites);
+     for(var i=0;i<workSites.length;i++){
+        if(website[0]==workSites[i]){
+        let start=false;
+        chrome.storage.local.set({start});
+        break;
+        }
+        else{
+        let start=true;
+        let act=true;
+        chrome.storage.local.set({act});
+        chrome.storage.local.set({start});
+            let prevTime = Date.now();
+    chrome.storage.local.set({prevTime});
+        }
+     }
+      });
+      chrome.storage.local.get("start",({start})=>{
+    console.log(start);
+    if(start==false){
+    chrome.storage.local.get("act",({act})=>{
+    if(act){
+        chrome.storage.local.get("prevTime",({prevTime})=>{
+            let curTime = Date.now();
+            var timediff=curTime-prevTime;
+            chrome.storage.local.get("procTotal",({procTotal})=>{
+                procTotal+=timediff;
+                chrome.storage.local.set({procTotal});
+                console.log(procTotal);
+            });
+        });
+        act=false;
+        chrome.storage.local.set({act});
+    }
+    });
+    }
+ });
+});
