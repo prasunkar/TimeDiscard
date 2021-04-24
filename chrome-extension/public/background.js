@@ -35,17 +35,49 @@ chrome.tabs.onActivated.addListener(async ()=>{
         if(website[0]==workSites[i]){
         let start=false;
         chrome.storage.local.set({start});
+        var stop=true;
         break;
         }
-        else{
-        let start=true;
-        chrome.storage.local.set({start});
-        }
      }
-      chrome.storage.local.get("start",({start})=>{
-    console.log(start);
- });
- });
+     if(stop!=true){
+     let start=true;
+     chrome.storage.local.get("act",({act})=>{
+        if(act==false){
+          let prevTime= Date.now()
+          chrome.storage.local.get("procSessions",({procSessions})=>{
+            procSessions+=1;
+            chrome.storage.local.set({procSessions});
+          });
+          chrome.storage.local.set({prevTime});
+        }
+     });
+     let act=true;
+     chrome.storage.local.set({act});
+     chrome.storage.local.set({start});
+     }
+     chrome.storage.local.get("act",({act})=>{
+     if(act){
+        chrome.storage.local.get("start",({start})=>{
+            if(start==false){
+            chrome.storage.local.get("prevTime",({prevTime})=>{
+                let curTime= Date.now();
+                let timediff=curTime-prevTime;
+                chrome.storage.local.get("procTotal",({procTotal})=>{
+                    procTotal+=timediff;
+                    chrome.storage.local.set({procTotal});
+                    console.log(Math.floor(procTotal/1000));
+                });
+            });
+            let act=false;
+            chrome.storage.local.set({act});
+            }
+        });
+     }
+     });
+     chrome.storage.local.get("prevTime",({prevTime})=>{
+        console.log(prevTime);
+     });
+      });
 });
 chrome.tabs.onUpdated.addListener(async ()=>{
  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -58,36 +90,70 @@ chrome.tabs.onUpdated.addListener(async ()=>{
         if(website[0]==workSites[i]){
         let start=false;
         chrome.storage.local.set({start});
+        var stop=true;
         break;
         }
-        else{
-        let start=true;
-        let act=true;
-        chrome.storage.local.set({act});
-        chrome.storage.local.set({start});
-            let prevTime = Date.now();
-    chrome.storage.local.set({prevTime});
-        }
      }
-      });
-      chrome.storage.local.get("start",({start})=>{
-    console.log(start);
-    if(start==false){
-    chrome.storage.local.get("act",({act})=>{
-    if(act){
-        chrome.storage.local.get("prevTime",({prevTime})=>{
-            let curTime = Date.now();
-            var timediff=curTime-prevTime;
-            chrome.storage.local.get("procTotal",({procTotal})=>{
-                procTotal+=timediff;
-                chrome.storage.local.set({procTotal});
-                console.log(procTotal);
+     if(stop!=true){
+     let start=true;
+     chrome.storage.local.get("act",({act})=>{
+        if(act==false){
+          let prevTime= Date.now()
+          chrome.storage.local.get("procSessions",({procSessions})=>{
+            procSessions+=1;
+            chrome.storage.local.set({procSessions});
+          });
+          chrome.storage.local.set({prevTime});
+        }
+     });
+     let act=true;
+     chrome.storage.local.set({act});
+     chrome.storage.local.set({start});
+     }
+     chrome.storage.local.get("act",({act})=>{
+     if(act){
+        chrome.storage.local.get("start",({start})=>{
+            if(start==false){
+            chrome.storage.local.get("prevTime",({prevTime})=>{
+                let curTime= Date.now();
+                let timediff=curTime-prevTime;
+                chrome.storage.local.get("procTotal",({procTotal})=>{
+                    procTotal+=timediff;
+                    chrome.storage.local.set({procTotal});
+                    console.log(Math.floor(procTotal/1000));
+                });
             });
+            let act=false;
+            chrome.storage.local.set({act});
+            }
         });
-        act=false;
-        chrome.storage.local.set({act});
-    }
-    });
-    }
- });
+     }
+     });
+     chrome.storage.local.get("prevTime",({prevTime})=>{
+        console.log(prevTime);
+     });
+      });
+});
+chrome.windows.onRemoved.addListener(()=>{
+console.log("off");
+    chrome.storage.local.get("act",({act})=>{
+    console.log(act);
+     if(act){
+        chrome.storage.local.get("start",({start})=>{
+            if(start){
+            chrome.storage.local.get("prevTime",({prevTime})=>{
+                let curTime= Date.now();
+                let timediff=curTime-prevTime;
+                chrome.storage.local.get("procTotal",({procTotal})=>{
+                    procTotal+=timediff;
+                    chrome.storage.local.set({procTotal});
+                    console.log(Math.floor(procTotal/1000));
+                });
+            });
+            let act=false;
+            chrome.storage.local.set({act});
+            }
+        });
+     }
+     });
 });
