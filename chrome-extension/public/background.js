@@ -8,7 +8,7 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.local.set({procSession});
   let hours= [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
   let days ={"0":[],"1":[],"2":[],"3":[],"4":[],"5":[],"6":[]};
-  let workSites=[];
+  let workSites=["docs.google.com"];
   let act=false;
   chrome.storage.local.set({act});
   chrome.storage.local.set({days});
@@ -23,5 +23,15 @@ chrome.runtime.onStartup.addListener(()=>{
     let act=false;
     chrome.storage.local.set({act});
     chrome.storage.local.set({start});
+});
+chrome.tabs.onActivated.addListener(()=>{
+ let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+ let extractSite= new RegExp("(?<=//).*(?=/)");
+ let website=tab.url.exec(extractSite);
+ chrome.storage.local.get("workSites",({workSites})=>{
+     for(var i=0;i<workSites.length;i++){
+        if(tab.url==``)
+     }
+ });
 });
 
