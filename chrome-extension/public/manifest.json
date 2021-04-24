@@ -4,7 +4,7 @@
   "version": "1.0",
   "manifest_version": 3,
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background-wrapper.js"
   },
   "permissions": ["storage", "scripting", "alarms", "tabs","activeTab","background"],
   "action": {

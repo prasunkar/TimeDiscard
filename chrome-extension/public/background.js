@@ -26,7 +26,7 @@ chrome.runtime.onStartup.addListener(()=>{
 });
 chrome.tabs.onActivated.addListener(async ()=>{
  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
- let extractSite= new RegExp("(?<=//).*(?=/)");
+ let extractSite= new RegExp("(?<=//).*(?=/)",'g');
  let website = extractSite.exec(tab.url);
  let start=true;
  chrome.storage.local.set({start});
