@@ -14,6 +14,8 @@ chrome.runtime.onInstalled.addListener(() => {
   let act=false;
   let on=false;
   let init=true;
+  let timerActive=false;
+  chrome.storage.local.set({timerActive})
   chrome.storage.local.set({init});
   chrome.storage.local.set({on});
   let timer=25;
@@ -61,8 +63,8 @@ chrome.alarms.onAlarm.addListener(() => {
   chrome.storage.local.get("timer",({timer})=>{
     chrome.storage.local.get("relax",({relax})=>{
     if(relax==false){
-        chrome.storage.local.get("on",({on})=>{
-        if(on){
+        chrome.storage.local.get("timerActive",({timerActive})=>{
+        if(timerActive){
         timer-=1;
         if(timer==0){
         chrome.tabs.create({url:"/index.html"});
@@ -77,8 +79,8 @@ chrome.alarms.onAlarm.addListener(() => {
         });
     }
     else{
-        chrome.storage.local.get("on",({on})=>{
-        if(on){
+        chrome.storage.local.get("timerActive",({timerActive})=>{
+        if(timerActive){
         chrome.storage.local.get("timer",({timer})=>{
             timer-=1;
             chrome.storage.local.set({timer});
