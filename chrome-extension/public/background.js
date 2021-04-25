@@ -250,14 +250,14 @@ chrome.tabs.onUpdated.addListener(async ()=>{
         chrome.storage.local.set({procSites});
          prevTime=curTime;
          chrome.storage.local.set({prevTime});
-         }
+         });
         chrome.storage.local.get("procSites",({procSites})=>{
         console.log("procrastination sites visited and time:")
         for (const [key, value] of Object.entries(procSites)) {
             console.log(`${key}: ${Math.floor(value/1000)}`);
         }
      });
-     });
+     }
         });
      });
                 chrome.storage.local.get("start",({start})=>{
