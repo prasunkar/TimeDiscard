@@ -1,4 +1,4 @@
-import { useState, Component } from 'react'
+import { Component } from 'react'
 import { motion } from 'framer-motion'
 
 export default class Pomodoro extends Component {
