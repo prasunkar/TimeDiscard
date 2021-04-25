@@ -68,9 +68,13 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
             chrome.alarms.create('pomodoro',{periodInMinutes:1})
         }
         else if(oldValue==true && newValue==false){
-            chrome.alarms.clear({name:"pomodoro"})
+            chrome.alarms.clear(name:"pomodoro")
         }
     }
+    chrome.storage.local.get("sessionSetting",({sessionSetting}){
+    let timer=sessionSetting
+    chrome.storage.local.set({timer});
+    });
   }
 });
 chrome.alarms.onAlarm.addListener(() => {
