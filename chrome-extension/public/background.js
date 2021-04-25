@@ -15,9 +15,11 @@ chrome.runtime.onInstalled.addListener(() => {
   let on=false;
   let init=true;
   let timerActive=false;
+  let relax=false;
   chrome.storage.local.set({timerActive})
   chrome.storage.local.set({init});
   chrome.storage.local.set({on});
+  chrome.storage.local.set({relax});
   let timer=25;
   chrome.storage.local.set({timer});
   let sessionSetting =25;
@@ -68,7 +70,7 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
             chrome.alarms.create('pomodoro',{periodInMinutes:1})
         }
         else if(oldValue==true && newValue==false){
-            chrome.alarms.clear(name:"pomodoro")
+            chrome.alarms.clear("pomodoro")
         }
     }
     if(key=='sessionSetting'){
@@ -85,19 +87,22 @@ chrome.alarms.onAlarm.addListener(() => {
   chrome.storage.local.get("timer",({timer})=>{
     chrome.storage.local.get("relax",({relax})=>{
     if(relax==false){
-        chrome.storage.local.get("timerActive",({timerActive})=>{
-        if(timerActive){
+      chrome.storage.local.get("timerActive",({timerActive})=>{
+      if(timerActive){
         timer-=1;
         if(timer==0){
-        chrome.tabs.create({url:"/index.html"});
-        chrome.storage.local.get("breakSetting",({breakSetting})=>{
-                let timer=breakSetting;
-                chrome.storage.local.set({timer});
-        });
-        let relax=true;
-        chrome.storage.local.set({relax});
+          // chrome.notifications.create('pomodoro', {
+          //   title: 'Break Time!',
+          //   message: 'Time to go on a break.'
+          // })
+          chrome.storage.local.get("breakSetting",({breakSetting})=>{
+            let timer=breakSetting;
+            chrome.storage.local.set({timer});
+          });
+          let relax=true;
+          chrome.storage.local.set({relax});
         }
-        }
+      }
         });
     }
     else{
@@ -108,7 +113,7 @@ chrome.alarms.onAlarm.addListener(() => {
             chrome.storage.local.set({timer});
             if(timer==0){
             let relax=false;
-            chrome.storage.local.set("sessionSetting",({sessionSetting})=>{
+            chrome.storage.local.get("sessionSetting",({sessionSetting})=>{
                 timer=sessionSetting;
                 chrome.storage.local.set({timer});
             })

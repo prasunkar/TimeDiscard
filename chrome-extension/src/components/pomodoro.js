@@ -11,18 +11,28 @@ export default function Pomodoro({ transition }) {
   const [sessionSetting, setSessionSetting] = useState(25)
 
   useEffect(() => {
-    chrome.storage.local.get(['on', 'breakSetting', 'sessionSetting'], result => {
-      setActive(result.on)
+    chrome.storage.local.get(['timerActive', 'breakSetting', 'sessionSetting', 'timer'], result => {
+      setActive(result.timerActive)
       setBreakSetting(result.breakSetting)
       setSessionSetting(result.sessionSetting)
-      setTime(result.sessionSetting)
+      
+
+      if (result.timerActive) {
+        setTime(result.timer)
+      } else {
+        setTime(result.sessionSetting)
+      }
     })
 
-    if (active) {
-      chrome.storage.local.get(['timer'], result => {
-        setTime(result.timer)
+    chrome.storage.onChanged.addListener((changes) => {
+      // if change occured in 'timer', then update 'time'
+      let changedItems = Object.keys(changes)
+      changedItems.forEach(item => {
+        if (item == 'timer') {
+          setTime(changes[item].newValue)
+        }
       })
-    }
+      })
   }, [])
 
   return (
@@ -47,7 +57,7 @@ export default function Pomodoro({ transition }) {
 
           onClick={() => {
             setActive(!active)
-            chrome.storage.local.set({ 'on': !active })
+            chrome.storage.local.set({ 'timerActive': !active })
           }}
           className="bg-red-500 text-white font-bold tracking-tighter rounded-xl py-4 px-16 focus:outline-none"
         >
