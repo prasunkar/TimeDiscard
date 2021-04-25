@@ -29,7 +29,10 @@ chrome.runtime.onStartup.addListener(()=>{
 chrome.tabs.onActivated.addListener(async ()=>{
  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
  let extractSite= new RegExp("(?<=//).*[.][a-z]*(?=/)",'g');
- let website = extractSite.exec(tab.url);
+ var website = extractSite.exec(tab.url);
+ chrome.history.addUrl({url:tab.url},()=>{
+    return 0;
+ });
  console.log("URL of website:"+website[0]);
  chrome.storage.local.get("workSites",({workSites})=>{
      console.log("work sites:"+workSites);
@@ -57,12 +60,8 @@ chrome.tabs.onActivated.addListener(async ()=>{
      chrome.storage.local.set({act});
      chrome.storage.local.set({start});
      chrome.storage.local.get("procSites",({procSites})=>{
-        if(procSites[website[0]]){
-            return 0;
-        }
-        else{
+        if(typeof procSites[website[0]] === 'undefined'){
         procSites[website[0]]=0;
-        console.log("Procsites:"+procSites[website[0]]);
         chrome.storage.local.set({procSites});
         }
      });
@@ -70,19 +69,25 @@ chrome.tabs.onActivated.addListener(async ()=>{
      });
      chrome.storage.local.get("act",({act})=>{
      if(act){
+     console.log("hello");
             chrome.storage.local.get("prevTime",({prevTime})=>{
                 let curTime= Date.now();
                 let timediff=curTime-prevTime;
-                 chrome.storage.local.get("procSites",({procSites})=>{
-                    procSites[website[0]]+=timediff;
-                    chrome.storage.local.set({procSites});
-                });
                 chrome.storage.local.get("procTotal",({procTotal})=>{
                     procTotal+=timediff;
                     console.log("timediff:"+timediff);
                     chrome.storage.local.set({procTotal});
                     console.log("time spent procrastinating:"+Math.floor(procTotal/1000));
                 });
+                     chrome.history.search({text:"",maxResults:2},(result)=>{
+        extractSite= new RegExp("(?<=//).*[.][a-z]*(?=/)",'g');
+        var prevSite=extractSite.exec(result[1].url)[0];
+        console.log(prevSite);
+        chrome.storage.local.get("procSites",({procSites})=>{
+        procSites[prevSite]+=timediff;
+        chrome.storage.local.set({procSites});
+        });
+     });
                 chrome.storage.local.get("start",({start})=>{
                 if(start==false){
                         let act=false;
@@ -106,7 +111,7 @@ chrome.tabs.onActivated.addListener(async ()=>{
      chrome.storage.local.get("procSites",({procSites})=>{
         console.log("procrastination sites visited and time:")
         for (const [key, value] of Object.entries(procSites)) {
-            console.log(`${key}: ${value}`);
+            console.log(`${key}: ${Math.floor(value/1000)}`);
         }
      });
 });
