@@ -288,11 +288,12 @@ chrome.tabs.onUpdated.addListener(async ()=>{
                      chrome.history.search({text:"",maxResults:2},(result)=>{
         extractSite= new RegExp("(?<=//).*[.][a-z]*(?=/)",'g');
         chrome.storage.local.get("init",({init})=>{
-        if(!init){
         var prevSite=extractSite.exec(result[1].url)[0];
         console.log(prevSite);
         chrome.storage.local.get("procSites",({procSites})=>{
+        if(!init){
         procSites[prevSite]+=timediff;
+        }
         console.log("heckle");
         console.log(procSites[prevSite]);
         chrome.storage.local.set({procSites});
@@ -305,7 +306,7 @@ chrome.tabs.onUpdated.addListener(async ()=>{
             console.log(`${key}: ${Math.floor(value/1000)}`);
         }
      });
-     }
+     
         });
      });
                 chrome.storage.local.get("start",({start})=>{
@@ -328,12 +329,14 @@ chrome.tabs.onUpdated.addListener(async ()=>{
      });
 });
 chrome.windows.onRemoved.addListener(()=>{
-     chrome.windows.getCurrent((window)=>{
-console.log(window.id)
-if(typeof window.id==='undefined'){
-    let on=false;
-    chrome.storage.local.set({on});
-}
+  chrome.windows.getCurrent((window)=>{
+    console.log(window.id)
+    if(typeof window.id==='undefined'){
+      let on=false;
+      let init=true;
+      chrome.storage.local.set({on});
+      chrome.storage.local.set({init});
+    }
 });
     chrome.storage.local.get("act",({act})=>{
      if(act){

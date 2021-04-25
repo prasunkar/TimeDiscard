@@ -59,6 +59,7 @@ function App() {
 function Analytics() {
   const [procTotal, setProcTotal] = useState(0)
   const [procSessions, setProcSessions] = useState(0)
+  const [websites, setWebsites] = useState([])
 
   useEffect(() => {
     chrome.storage.local.get(['procTotal'], result => {
@@ -67,7 +68,23 @@ function Analytics() {
     chrome.storage.local.get(['procSessions'], result => {
       setProcSessions(result.procSessions)
     })
+    chrome.storage.local.get(['procSites'], result => {
+      setWebsites(result.procSites)
+    })
   }, [])
+
+  let websitesArray = Object.keys(websites)
+
+  function formatTime(seconds) {
+    let minutes = Math.floor(seconds / 60000)
+    let s = ((seconds % 60000) / 1000).toFixed(0)
+
+    if (minutes > 0) {
+      return `${minutes}m ${s}s`
+    } else {
+      return `${s}s`
+    }
+  }
 
 
   return (
@@ -79,8 +96,15 @@ function Analytics() {
       className="w-10/12 mx-auto"
     >
       <motion.h1 className="text-3xl my-2 font-bold tracking-tight">Analytics</motion.h1>
-      <p>{ procTotal }</p>
-      <p>{ procSessions }</p>
+      <h1 className="text-center text-6xl font-bold text-red-500 my-6">{ formatTime(procTotal) }</h1>
+      <p className="text-gray-400 text-base text-center font-semibold mb-4">time procrastinated over <span className="text-gray-500 font-bold italics">{ procSessions }</span> session{procSessions != 1 ? 's' : ''}
+      </p>
+      { websitesArray.map(website => (
+        <div className="flex flex-row mx-auto items-center bg-white">
+          <p className="flex-grow text-lg font-medium truncate text-gray-600">{website}</p>
+          <span className="flex-grow-0 my-2 ml-2 font-bold text-lg text-red-500">{ formatTime(websites[website]) }</span>
+        </div>
+      )) }
     </motion.div>
   )
 }

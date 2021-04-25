@@ -35,7 +35,7 @@ export default function Todo({ transition }) {
           <div key={todo.id} className="flex flex-row mx-auto items-center bg-white">
             <p className="flex-grow text-lg font-medium truncate text-gray-600">{ todo.text }</p>
             <button
-              className="flex-grow-0 my-2 ml-2 outline-none"
+              className="flex-grow-0 my-2 ml-2 focus:outline-none"
               onClick={() => { deleteTodo(todo.id) }}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -64,7 +64,7 @@ export default function Todo({ transition }) {
               autoComplete="off"
               className="flex-grow text-lg outline-none"
             />
-            <button type="submit" className="flex-grow-0 outline-none ml-2">
+            <button type="submit" className="flex-grow-0 focus:outline-none ml-2">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-red-500" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" />
               </svg>
