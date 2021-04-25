@@ -50,7 +50,6 @@ chrome.windows.onCreated.addListener(()=>{
             let timer=sessionSetting;
             chrome.storage.local.set({timer});
             })
-            chrome.alarms.create({ periodInMinutes: 1 });
             on=true;
             let relax=false;
             chrome.storage.local.set({relax});
@@ -58,7 +57,22 @@ chrome.windows.onCreated.addListener(()=>{
         }
     });
 });
-
+chrome.storage.onChanged.addListener(function (changes, namespace) {
+  for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
+    console.log(
+      `Storage key "${key}" in namespace "${namespace}" changed.`,
+      `Old value was "${oldValue}", new value is "${newValue}".`
+    );
+    if(key=='timerActive'){
+        if(oldValue==false && newValue==true ){
+            chrome.alarms.create{name:"pomodoro",periodInMinutes:1}
+        }
+        else if(oldValue==true && newValue==false){
+            chrome.alarms.clear({name:"pomodoro"})
+        }
+    }
+  }
+});
 chrome.alarms.onAlarm.addListener(() => {
   chrome.storage.local.get("timer",({timer})=>{
     chrome.storage.local.get("relax",({relax})=>{
@@ -297,6 +311,13 @@ chrome.tabs.onUpdated.addListener(async ()=>{
      });
 });
 chrome.windows.onRemoved.addListener(()=>{
+     chrome.windows.getCurrent((window)=>{
+console.log(window.id)
+if(typeof window.id==='undefined'){
+    let on=false;
+    chrome.storage.local.set({on});
+}
+});
     chrome.storage.local.get("act",({act})=>{
      if(act){
      console.log("hello");
