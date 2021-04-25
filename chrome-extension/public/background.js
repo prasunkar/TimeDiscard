@@ -48,6 +48,8 @@ chrome.alarms.onAlarm.addListener(() => {
   chrome.storage.local.get("timer",({timer})=>{
     chrome.storage.local.get("relax",({relax})=>{
     if(relax==false){
+        chrome.storage.local.get("on",({on})=>{
+        if(on){
         timer-=1;
         if(timer==0){
         chrome.tabs.create({url:"/index.html"});
@@ -56,8 +58,12 @@ chrome.alarms.onAlarm.addListener(() => {
         chrome.storage.local.set({relax});
         }
         chrome.storage.local.set({timer});
+        }
+        });
     }
     else{
+        chrome.storage.local.get("on",({on})=>{
+        if(on){
         chrome.storage.local.get("timer",({timer})=>{
             timer-=1;
             chrome.storage.local.set({timer});
@@ -66,6 +72,8 @@ chrome.alarms.onAlarm.addListener(() => {
             chrome.storage.local.set({relax});
             }
         });
+        }
+        })
     }
     });
 });
