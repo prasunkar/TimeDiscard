@@ -184,9 +184,6 @@ chrome.tabs.onUpdated.addListener(async ()=>{
         }
      }
      if(stop!=true){
-      chrome.history.addUrl({url:tab.url},()=>{
-    return 0;
- });
      let start=true;
      chrome.storage.local.get("act",({act})=>{
         if(act==false){
@@ -228,7 +225,7 @@ chrome.tabs.onUpdated.addListener(async ()=>{
         var prevSite=extractSite.exec(result[1].url)[0];
         }
         else if(start==false){
-        var prevSite=extractSite.exec(result[0].url)[0];
+        var prevSite=extractSite.exec(result[1].url)[0];
         }
         console.log(prevSite);
         chrome.storage.local.get("procSites",({procSites})=>{
