@@ -71,10 +71,14 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
             chrome.alarms.clear(name:"pomodoro")
         }
     }
-    chrome.storage.local.get("sessionSetting",({sessionSetting}){
+    if(key=='sessionSetting'){
+    if(oldValue!=newValue ){
+               chrome.storage.local.get("sessionSetting",({sessionSetting})=>{
     let timer=sessionSetting
     chrome.storage.local.set({timer});
     });
+    }
+    }
   }
 });
 chrome.alarms.onAlarm.addListener(() => {
