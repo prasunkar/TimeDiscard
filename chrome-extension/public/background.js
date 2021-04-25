@@ -65,7 +65,7 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
     );
     if(key=='timerActive'){
         if(oldValue==false && newValue==true ){
-            chrome.alarms.create({name:"pomodoro",periodInMinutes:1})
+            chrome.alarms.create('pomodoro',{periodInMinutes:1})
         }
         else if(oldValue==true && newValue==false){
             chrome.alarms.clear({name:"pomodoro"})
