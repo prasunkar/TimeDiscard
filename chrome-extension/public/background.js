@@ -108,6 +108,10 @@ chrome.alarms.onAlarm.addListener(() => {
             chrome.storage.local.set({timer});
             if(timer==0){
             let relax=false;
+            chrome.storage.local.set("sessionSetting",({sessionSetting})=>{
+                timer=sessionSetting;
+                chrome.storage.local.set({timer});
+            })
             chrome.storage.local.set({relax});
             }
         });
