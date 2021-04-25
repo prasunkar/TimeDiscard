@@ -1,7 +1,6 @@
-// eslint-disable-next-line
 /*global chrome*/
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 import './index.css'
 // import logo from './logo.png'
@@ -10,6 +9,7 @@ import { MemoryRouter as Router, Route, Switch, Link } from 'react-router-dom'
 
 import Pomodoro from './components/pomodoro'
 import Todo from './components/todo'
+import Settings from './components/settings'
 
 const transition = { type: "spring", bounce: 0.32, duration: 0.42, ease: [0.43, 0.13, 0.23, 0.96] }
 
@@ -47,7 +47,7 @@ function App() {
               <Route exact path="/" render={() => <Analytics />} />
               <Route exact path="/pomodoro" render={() => <Pomodoro transition={transition} />} />
               <Route exact path="/todo" render={() => <Todo transition={transition} />} />
-              <Route exact path="/settings" render={() => <Settings />} />
+              <Route exact path="/settings" render={() => <Settings transition={transition} />} />
             </Switch>
           </AnimatePresence>
         )}
@@ -57,6 +57,19 @@ function App() {
 }
 
 function Analytics() {
+  const [procTotal, setProcTotal] = useState(0)
+  const [procSessions, setProcSessions] = useState(0)
+
+  useEffect(() => {
+    chrome.storage.local.get(['procTotal'], result => {
+      setProcTotal(result.procTotal)
+    })
+    chrome.storage.local.get(['procSessions'], result => {
+      setProcSessions(result.procSessions)
+    })
+  }, [])
+
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -66,23 +79,49 @@ function Analytics() {
       className="w-10/12 mx-auto"
     >
       <motion.h1 className="text-3xl my-2 font-bold tracking-tight">Analytics</motion.h1>
+      <p>{ procTotal }</p>
+      <p>{ procSessions }</p>
     </motion.div>
   )
 }
 
-function Settings() {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 8 }}
-      transition={transition}
-      className="w-10/12 mx-auto"
-    >
-      <motion.h1 className="text-3xl my-2 font-bold tracking-tight">Settings</motion.h1>
-    </motion.div>
-  )
-}
+// function Settings() {
+//   const [workSites, setWorkSites] = useState([])
+
+//   useEffect(() => {
+//     /*global chrome*/
+//     chrome.storage.local.get(['workSites'], result => {
+//       setWorkSites(result.workSites)
+//     })
+//   }, [])
+
+//   return (
+//     <motion.div
+//       initial={{ opacity: 0, y: 24 }}
+//       animate={{ opacity: 1, y: 0 }}
+//       exit={{ opacity: 0, y: 8 }}
+//       transition={transition}
+//       className="w-10/12 mx-auto"
+//     >
+//       <motion.h1 className="text-3xl my-2 font-bold tracking-tight">Settings</motion.h1>
+//       {
+//         workSites.map((site, index) => (
+//           <div key={index} className="flex flex-row mx-auto items-center bg-white">
+//             <p className="flex-grow text-lg font-medium truncate text-gray-600">{ site }</p>
+//             <button
+//               className="flex-grow-0 my-2 ml-2 outline-none"
+//               onClick={() => {  }}
+//             >
+//               <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+//                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
+//               </svg>
+//             </button>
+//           </div>
+//         ))
+//       }
+//     </motion.div>
+//   )
+// }
 
 ReactDOM.render(
     <App />,
