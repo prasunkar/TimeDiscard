@@ -13,6 +13,8 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.local.set({procSites});
   let act=false;
   let on=false;
+  let init=true;
+  chrome.storage.local.set({init});
   chrome.storage.local.set({on});
   let timer=25;
   chrome.storage.local.set({timer});
@@ -39,6 +41,7 @@ chrome.runtime.onStartup.addListener(()=>{
     chrome.storage.local.set({init});
 });
 chrome.windows.onCreated.addListener(()=>{
+    console.log("hello");
     chrome.storage.local.get("on",({on})=>{
         if(on==false){
             chrome.storage.local.get("sessionSetting",({sessionSetting})=>{
@@ -290,12 +293,6 @@ chrome.tabs.onUpdated.addListener(async ()=>{
      chrome.storage.local.get("procSessions",({procSessions})=>{
         console.log("# of procrastination:"+procSessions);
      });
-     chrome.storage.local.get("init",({init})=>{
-if(init){
-init=false;
-chrome.storage.local.set({init});
-}
-});
 });
 chrome.windows.onRemoved.addListener(()=>{
     chrome.storage.local.get("act",({act})=>{
@@ -343,13 +340,6 @@ chrome.windows.onRemoved.addListener(()=>{
      chrome.storage.local.set({act});
      start=false;
      chrome.storage.local.set({start});
-     chrome.windows.getCurrent((window)=>{
-console.log(window.id)
-if(typeof window.id==='undefined'){
-    let init=true;
-    chrome.storage.local.set({init});
-}
-});
      });
      chrome.storage.local.get("prevTime",({prevTime})=>{
         console.log("prevTime:"+prevTime);
@@ -366,4 +356,4 @@ if(typeof window.id==='undefined'){
             console.log(`${key}: ${Math.floor(value/1000)}`);
         }
      });
-});
+})
