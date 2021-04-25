@@ -81,18 +81,27 @@ chrome.tabs.onActivated.addListener(async ()=>{
                 });
                      chrome.history.search({text:"",maxResults:2},(result)=>{
         extractSite= new RegExp("(?<=//).*[.][a-z]*(?=/)",'g');
+        chrome.storage.local.get("start",({start})=>{
+        if(start){
+        var prevSite=extractSite.exec(result[1].url)[0];
+        }
+        else if(start==false){
         var prevSite=extractSite.exec(result[0].url)[0];
+        }
         console.log(prevSite);
         chrome.storage.local.get("procSites",({procSites})=>{
         procSites[prevSite]+=timediff;
         console.log("heckle");
         console.log(procSites[prevSite]);
         chrome.storage.local.set({procSites});
+         prevTime=curTime;
+         chrome.storage.local.set({prevTime});
         chrome.storage.local.get("procSites",({procSites})=>{
         console.log("procrastination sites visited and time:")
         for (const [key, value] of Object.entries(procSites)) {
             console.log(`${key}: ${Math.floor(value/1000)}`);
         }
+     });
      });
         });
      });
@@ -101,8 +110,6 @@ chrome.tabs.onActivated.addListener(async ()=>{
                         let act=false;
                         chrome.storage.local.set({act});
                 }
-                prevTime=curTime;
-                chrome.storage.local.set({prevTime});
                 });
             });
      }
@@ -117,7 +124,7 @@ chrome.tabs.onActivated.addListener(async ()=>{
         console.log("# of procrastination:"+procSessions);
      });
 });
-chrome.tabs.onUpdated.addListener(async ()=>{
+chrome.tabs.onActivated.addListener(async ()=>{
  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
  let extractSite= new RegExp("(?<=//).*[.][a-z]*(?=/)",'g');
  var website = extractSite.exec(tab.url);
@@ -172,18 +179,27 @@ chrome.tabs.onUpdated.addListener(async ()=>{
                 });
                      chrome.history.search({text:"",maxResults:2},(result)=>{
         extractSite= new RegExp("(?<=//).*[.][a-z]*(?=/)",'g');
+        chrome.storage.local.get("start",({start})=>{
+        if(start){
+        var prevSite=extractSite.exec(result[1].url)[0];
+        }
+        else if(start==false){
         var prevSite=extractSite.exec(result[0].url)[0];
+        }
         console.log(prevSite);
         chrome.storage.local.get("procSites",({procSites})=>{
         procSites[prevSite]+=timediff;
         console.log("heckle");
         console.log(procSites[prevSite]);
         chrome.storage.local.set({procSites});
+         prevTime=curTime;
+         chrome.storage.local.set({prevTime});
         chrome.storage.local.get("procSites",({procSites})=>{
         console.log("procrastination sites visited and time:")
         for (const [key, value] of Object.entries(procSites)) {
             console.log(`${key}: ${Math.floor(value/1000)}`);
         }
+     });
      });
         });
      });
@@ -192,8 +208,6 @@ chrome.tabs.onUpdated.addListener(async ()=>{
                         let act=false;
                         chrome.storage.local.set({act});
                 }
-                prevTime=curTime;
-                chrome.storage.local.set({prevTime});
                 });
             });
      }
