@@ -168,7 +168,7 @@ chrome.tabs.onActivated.addListener(async ()=>{
         console.log("# of procrastination:"+procSessions);
      });
 });
-chrome.tabs.onActivated.addListener(async ()=>{
+chrome.tabs.onUpdated.addListener(async ()=>{
  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
  let extractSite= new RegExp("(?<=//).*[.][a-z]*(?=/)",'g');
  var website = extractSite.exec(tab.url);
