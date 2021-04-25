@@ -12,6 +12,14 @@ chrome.runtime.onInstalled.addListener(() => {
   let procSites={};
   chrome.storage.local.set({procSites});
   let act=false;
+  let on=false;
+  chrome.storage.local.set({on});
+  let timer=25;
+  chrome.storage.local.set({timer});
+  let sessionSetting =25;
+  let breakSetting=5;
+  chrome.storage.local.set({sessionSetting})
+  chrome.storage.local.set({breakSetting});
   chrome.storage.local.set({act});
   chrome.storage.local.set({days});
   chrome.storage.local.set({hours});
@@ -33,8 +41,10 @@ chrome.runtime.onStartup.addListener(()=>{
 chrome.windows.onCreated.addListener(()=>{
     chrome.storage.local.get("on",({on})=>{
         if(on==false){
-            let timer=25;
+            chrome.storage.local.get("sessionSetting",({sessionSetting})=>{
+            let timer=sessionSetting;
             chrome.storage.local.set({timer});
+            })
             chrome.alarms.create({ periodInMinutes: 1 });
             on=true;
             let relax=false;
@@ -53,11 +63,13 @@ chrome.alarms.onAlarm.addListener(() => {
         timer-=1;
         if(timer==0){
         chrome.tabs.create({url:"/index.html"});
-        timer=5;
+        chrome.storage.local.get("breakSetting",({breakSetting})=>{
+                let timer=breakSetting;
+                chrome.storage.local.set({timer});
+        });
         let relax=true;
         chrome.storage.local.set({relax});
         }
-        chrome.storage.local.set({timer});
         }
         });
     }
