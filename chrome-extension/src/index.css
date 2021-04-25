@@ -4,8 +4,8 @@
 
 html, body {
   width: 384px;
-  height: 576px;
-  @apply rounded-lg bg-gray-100 shadow-lg;
+  min-height: 576px;
+  @apply rounded-lg bg-white shadow-lg;
 }
 
 body {
