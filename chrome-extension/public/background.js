@@ -25,6 +25,50 @@ chrome.runtime.onStartup.addListener(()=>{
     let act=false;
     chrome.storage.local.set({act});
     chrome.storage.local.set({start});
+    let on=false;
+    chrome.storage.local.set({on});
+});
+chrome.windows.onCreated.addListener(()=>{
+    chrome.storage.local.get("on",({on})=>{
+        if(on==false){
+            let timer=25;
+            let relaxTime=5;
+            chrome.storage.local.set({timer});
+            chrome.storage.local.set({relaxTime});
+            chrome.alarms.create({ periodInMinutes: 1 });
+            on=true;
+            let relax=false;
+            chrome.storage.local.set({relax});
+            chrome.storage.local.set({on});
+        }
+    });
+});
+
+chrome.alarms.onAlarm.addListener(() => {
+  chrome.storage.local.get("timer",({timer})=>{
+    chrome.storage.local.get("relax",({relax})=>{
+    if(relax==false){
+        timer-=1;
+        if(timer==0){
+        chrome.tabs.create({url:"/index.html"});
+        timer=25;
+        let relax=true;
+        chrome.storage.local.set({relax});
+        }
+        chrome.storage.local.set({timer});
+    }
+    else{
+        chrome.storage.local.get("relaxTime",({relaxTime})=>{
+            relaxTime-=1;
+            chrome.storage.local.set({relaxTime});
+            if(relaxTime==0){
+            let relax=false;
+            chrome.storage.local.set({relax});
+            }
+        });
+    }
+    });
+});
 });
 chrome.tabs.onActivated.addListener(async ()=>{
  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
