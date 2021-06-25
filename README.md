@@ -1,4 +1,4 @@
-# [Lighthouse Hacks](https://lighthousehacks.ca): [TimeDiscard](https://devpost.com/software/timediscard)
+# 🥉 [Lighthouse Hacks](https://lighthousehacks.ca): [TimeDiscard](https://devpost.com/software/timediscard)
 
 > Created by Stephen Le, Krishna Patel, Maleeha Mirza, and Prasun Kar
 
